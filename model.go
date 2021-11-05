@@ -48,6 +48,9 @@ func FindOne(filter, projection bson.M, collectionName string) *mongo.SingleResu
 func Find(filter, projection bson.M, collectionName string) (*mongo.Cursor, error) {
 	return database.Collection(collectionName).Find(context.Background(), filter, options.Find().SetProjection(projection))
 }
+func FindSort(filter, projection, filter1 bson.M, collectionName string) (*mongo.Cursor, error) {
+	return database.Collection(collectionName).Find(context.Background(), filter, options.Find().SetProjection(projection), options.Find().SetSort(filter1))
+}
 func Aggregate(pipeline bson.A, collectionName string) (*mongo.Cursor, error) {
 	return database.Collection(collectionName).Aggregate(context.Background(), pipeline)
 }
