@@ -76,20 +76,6 @@ func ValidateEmail(email string) bool {
 func PreSignedUrl(filename, path string) (string, error) {
 	filename = strings.ReplaceAll(filename, " ", "")
 	filename = strconv.Itoa(int(time.Now().Unix())) + filename
-	// 	svc, err := createS3Session()
-	// 	if err != nil {
-	// 		ECLog2("unable to get s3 session", err)
-	// 		return "", err
-	// 	}
-	// 	req, _ := svc.PutObjectRequest(&s3.PutObjectInput{
-	// 		Bucket: aws.String(viper.GetString("aws.bucket")),
-	// 		Key:    aws.String(path + "/" + filename),
-	// 	})
-	// 	str, err := req.Presign(15 * time.Minute)
-	// 	if err != nil {
-	// 		ECLog2("failed to add expiry time to presigned url", err)
-	// 		return "", err
-	// 	}
 	opts := &storage.SignedURLOptions{
 		Scheme: storage.SigningSchemeV4,
 		Method: "PUT",
@@ -200,7 +186,7 @@ func GetRandomString(length int) string {
 func SendVerificationCode(email, verificationCode string) (string, error) {
 	url := createUrl(verificationCode, "verifyemail")
 	subject := "Verification Email"
-	htmlBody := "Hi " + email + ",<br><br>"+viper.GetString("email.template")+"<br><br><a href=" + url + ">Verification Link</a>"
+	htmlBody := "Hi " + email + ",<br><br>"+viper.GetString("email.template")+"<br><br><button style='display:block;margin-left:auto;margin-right:auto;background-color:#323a75' onclick='window.location.href ="+url +"';>Verify email</button>"+ "<br/><br/>"+"<a href=" + url + ">Verification Link</a>"
 	textBody := "Hi " + email + ",\n\n"+ viper.GetString("email.template") + url + ""
 	return sendEmail(email, subject, htmlBody, textBody)
 }
