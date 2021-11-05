@@ -186,7 +186,7 @@ func GetRandomString(length int) string {
 func SendVerificationCode(email, verificationCode string) (string, error) {
 	url := createUrl(verificationCode, "verifyemail")
 	subject := "Verification Email"
-	htmlBody := "Hi " + email + ",<br><br>"+viper.GetString("email.template")+"<br><br><button style='display:block;margin-left:auto;margin-right:auto;background-color:#323a75' onclick='window.location.href ="+url +"';>Verify email</button>"+ "<br/><br/>"+"<a href=" + url + ">Verification Link</a>"
+	htmlBody := "Hi " + email + ",<br><br>"+viper.GetString("email.template")+"<br><br>"+"<a href=" + url + ">Verification Link</a>"
 	textBody := "Hi " + email + ",\n\n"+ viper.GetString("email.template") + url + ""
 	return sendEmail(email, subject, htmlBody, textBody)
 }
