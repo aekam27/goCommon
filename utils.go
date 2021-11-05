@@ -107,32 +107,38 @@ func PreSignedUrl(filename, path string) (string, error) {
 	}
 	return str, nil
 }
-
-func PreSignedDownloadUrl(filename, path string) (string, error) {
-	// 	svc, err := createS3Session()
-	// 	if err != nil {
-	// 		ECLog2("unable to get s3 session", err)
-	// 		return "", err
-	// 	}
-	// 	req, _ := svc.GetObjectRequest(&s3.GetObjectInput{
-	// 		Bucket: aws.String(viper.GetString("aws.bucket")),
-	// 		Key:    aws.String(path + "/" + filename),
-	// 	})
-	// 	str, err := req.Presign(15 * time.Minute)
-	// 	if err != nil {
-	// 		ECLog2("failed to add expiry time to presigned url", err)
-	// 		return "", err
-	// 	}
-	opts := &storage.SignedURLOptions{
-		Scheme:         storage.SigningSchemeV4,
-		Method:         "GET",
-		GoogleAccessID: viper.GetString("gcp.email"),
-		PrivateKey:     []byte(viper.GetString("gcp.private_key")),
-		Expires:        time.Now().Add(15 * time.Minute),
-	}
-	str, err := storage.SignedURL(viper.GetString("gcp.bucket"), filename, opts)
+func PreSignedUrlAWS(filename, path string) (string, error) {
+	filename = strings.ReplaceAll(filename, " ", "")
+	filename = strconv.Itoa(int(time.Now().Unix())) + filename
+	svc, err := createS3Session()
 	if err != nil {
-		ECLog2("failed to create presigned url", err)
+		ECLog2("unable to get s3 session", err)
+		return "", err
+	}
+	req, _ := svc.PutObjectRequest(&s3.PutObjectInput{
+		Bucket: aws.String(viper.GetString("aws.bucket")),
+		Key:    aws.String(path + "/" + filename),
+	})
+	str, err := req.Presign(15 * time.Minute)
+	if err != nil {
+		ECLog2("failed to add expiry time to presigned url", err)
+		return "", err
+	}
+	return str, nil
+}
+func PreSignedDownloadUrlAWS(filename, path string) (string, error) {
+	svc, err := createS3Session()
+	if err != nil {
+		ECLog2("unable to get s3 session", err)
+		return "", err
+	}
+	req, _ := svc.GetObjectRequest(&s3.GetObjectInput{
+		Bucket: aws.String(viper.GetString("aws.bucket")),
+		Key:    aws.String(path + "/" + filename),
+	})
+	str, err := req.Presign(15 * time.Minute)
+	if err != nil {
+		ECLog2("failed to add expiry time to presigned url", err)
 		return "", err
 	}
 	return str, nil
@@ -194,8 +200,8 @@ func GetRandomString(length int) string {
 func SendVerificationCode(email, verificationCode string) (string, error) {
 	url := createUrl(verificationCode, "verifyemail")
 	subject := "Verification Email"
-	htmlBody := "Hi " + email + ",<br><br>Please click on the below url to verify your email cart and activate your account<br><br><a href=" + url + ">Verification Link</a>"
-	textBody := "Hi " + email + ",\n\nPlease click on the below url to verify your email cart and activate your account" + url + ""
+	htmlBody := "Hi " + email + ",<br><br>"+viper.GetString("email.template")+"<br><br><a href=" + url + ">Verification Link</a>"
+	textBody := "Hi " + email + ",\n\n"+ viper.GetString("email.template") + url + ""
 	return sendEmail(email, subject, htmlBody, textBody)
 }
 
