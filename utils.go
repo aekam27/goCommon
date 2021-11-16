@@ -191,6 +191,14 @@ func SendVerificationCode(email, verificationCode string) (string, error) {
 	return sendEmail(email, subject, htmlBody, textBody)
 }
 
+func SendPasswordConfirmation(email, verificationCode string) (string, error) {
+	url := createUrl(verificationCode, "verifyemail")
+	subject := viper.GetString("pemail.subject")
+	htmlBody := viper.GetString("pemail.logo")+"<br/><br/>"+"Hi " + email + ",<br>"+viper.GetString("pemail.template")+"<br>"+"<a href=" + url + ">Link</a>"+viper.GetString("pemail.end")
+	textBody := viper.GetString("pemail.logo")+ "\n\n"+"Hi " + email + ",\n\n"+ viper.GetString("pemail.template") + url + ""
+	return sendEmail(email, subject, htmlBody, textBody)
+}
+
 func SendResetPasswordLink(email, resetCode string) (string, error) {
 	url := createUrl(resetCode, "resetpassword")
 	subject := "Reset Password"
