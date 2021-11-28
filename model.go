@@ -49,7 +49,7 @@ func Find(filter, projection bson.M, collectionName string) (*mongo.Cursor, erro
 	return database.Collection(collectionName).Find(context.Background(), filter, options.Find().SetProjection(projection))
 }
 func FindSort(filter, projection, filter1 bson.M, collectionName string) (*mongo.Cursor, error) {
-	return database.Collection(collectionName).Find(context.Background(), filter, options.Find().SetProjection(projection), options.Find().SetSort(filter1))
+	return database.Collection(collectionName).Find(context.Background(), filter, options.Find().SetProjection(projection), options.Find().SetSort(filter1),options.Find().SetLimit(int64(limit)), options.Find().SetSkip(int64(offset)))
 }
 func Aggregate(pipeline bson.A, collectionName string) (*mongo.Cursor, error) {
 	return database.Collection(collectionName).Aggregate(context.Background(), pipeline)
