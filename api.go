@@ -50,7 +50,7 @@ func PostApiwithBasicAuth(auth string,url string,body interface{})([]byte, error
 	method := "POST"
 	basicAuth := "Basic " + auth
 	client := &http.Client{}
-	requestByte, err := json.Marshal(msg)
+	requestByte, err := json.Marshal(body)
 	if err != nil {
 		return []byte{}, err
 	}
