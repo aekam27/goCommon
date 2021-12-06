@@ -45,25 +45,25 @@ func PostApi(token, url string, doc interface{}) ([]byte, error) {
 	return ioutil.ReadAll(res.Body)
 }
 
-//Click send api to send otp
+
 func PostApiwithBasicAuth(auth string,url string,body interface{})([]byte, error){
 	method := "POST"
 	basicAuth := "Basic " + auth
 	client := &http.Client{}
 	requestByte, err := json.Marshal(msg)
 	if err != nil {
-		return "", err
+		return []byte{}, err
 	}
 	requestReader := bytes.NewReader(requestByte)
 	req, err := http.NewRequest(method, url, requestReader)
 	if err != nil {
-		return "", err
+		return []byte{}, err
 	}
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", basicAuth)
 	res, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return []byte{}, err
 	}
 	defer res.Body.Close()
 	return ioutil.ReadAll(res.Body)
