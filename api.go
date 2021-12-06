@@ -46,7 +46,7 @@ func PostApi(token, url string, doc interface{}) ([]byte, error) {
 }
 
 //Click send api to send otp
-func PostApiwithBasicAuth(auth string,url string,body interface{})(){
+func PostApiwithBasicAuth(auth string,url string,body interface{})([]byte, error){
 	method := "POST"
 	basicAuth := "Basic " + auth
 	client := &http.Client{}
