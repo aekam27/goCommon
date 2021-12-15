@@ -105,7 +105,7 @@ func PreSignedUrlAWS(filename, path string) (string, error) {
 		Bucket: aws.String(viper.GetString("aws.bucket")),
 		Key:    aws.String(path + "/" + filename),
 	})
-	str, err := req.Presign(15 * time.Minute)
+	str, err := req.Presign(10080 * time.Minute)
 	if err != nil {
 		ECLog2("failed to add expiry time to presigned url", err)
 		return "", err
@@ -122,7 +122,7 @@ func PreSignedDownloadUrlAWS(filename, path string) (string, error) {
 		Bucket: aws.String(viper.GetString("aws.bucket")),
 		Key:    aws.String(path + "/" + filename),
 	})
-	str, err := req.Presign(15 * time.Minute)
+	str, err := req.Presign(10080 * time.Minute)
 	if err != nil {
 		ECLog2("failed to add expiry time to presigned url", err)
 		return "", err
