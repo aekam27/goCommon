@@ -183,6 +183,14 @@ func GetRandomString(length int) string {
 	return string(b)
 }
 
+func EmailLoginOTP(email,name, verificationCode string) (string, error) {
+	subject := viper.GetString("emaillogin.subject")
+	htmlBody := viper.GetString("emaillogin.logo")+"<br/><br/>"+"Hi " + name + ",<br>"+viper.GetString("emaillogin.template")+"<br>"+viper.GetString("emaillogin.verifcode")+verificationCode+"</h1>"+viper.GetString("emaillogin.end")
+	textBody := viper.GetString("emaillogin.logo")+ "\n\n"+"Hi " + email + ",\n\n"+ viper.GetString("emaillogin.template") + verificationCode + ""
+	return sendEmail(email, subject, htmlBody, textBody)
+}
+
+
 func SendVerificationCode(email, verificationCode string) (string, error) {
 	url := createUrl(verificationCode, "verifyemail")
 	subject := viper.GetString("email.subject")
