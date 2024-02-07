@@ -1,1 +1,1 @@
-# trestCommon
+# Common Util function for go
