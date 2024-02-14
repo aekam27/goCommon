@@ -1,6 +1,8 @@
 package trestCommon
 
 import (
+	"bytes"
+	"compress/gzip"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -9,6 +11,7 @@ import (
 	"fmt"
 	"io"
 	random "math/rand"
+	"net/http"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -384,4 +387,22 @@ func createSeSSession() (*ses.SES, error) {
 	}
 	svc := ses.New(sess)
 	return svc, nil
+}
+
+func GZIPResp(w http.ResponseWriter, respData []byte) {
+	var buf bytes.Buffer
+	gz := gzip.NewWriter(&buf)
+	_, err := gz.Write(respData)
+	if err != nil {
+		http.Error(w, "Failed to compress the content", http.StatusInternalServerError)
+		return
+	}
+	if err := gz.Close(); err != nil {
+		http.Error(w, "Failed to close the gzip writer", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Encoding", "gzip")
+	w.WriteHeader(http.StatusOK)
+	w.Write(buf.Bytes())
 }
